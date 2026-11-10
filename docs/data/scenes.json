@@ -1,0 +1,584 @@
+{
+ "version": "v1",
+ "question": "Rank the three videos overall, from best (1) to worst (3).",
+ "scenes": [
+  {
+   "id": "s_a3b2bc775b56fc30",
+   "title": "Podcast desk",
+   "summary": "Across a close podcast desk, a woman asks where her co-host grew up and he answers.",
+   "duration": 10.125,
+   "requested": [
+    {
+     "label": "Woman's Voice",
+     "windows": [
+      {
+       "start": 0.4,
+       "end": 3.0,
+       "text": "So where did you grow up"
+      }
+     ]
+    },
+    {
+     "label": "Man's Voice",
+     "windows": [
+      {
+       "start": 3.4,
+       "end": 6.6,
+       "text": "In a small town near the coast"
+      }
+     ]
+    }
+   ],
+   "outputs": [
+    {
+     "id": "o_00d39d5d4c90ee58",
+     "src": "media/o_00d39d5d4c90ee58.mp4"
+    },
+    {
+     "id": "o_b19268006da7ae47",
+     "src": "media/o_b19268006da7ae47.mp4"
+    },
+    {
+     "id": "o_bb2dbfa13febb3ce",
+     "src": "media/o_bb2dbfa13febb3ce.mp4"
+    }
+   ]
+  },
+  {
+   "id": "s_df8a6ff5e97006e1",
+   "title": "Cafe performance",
+   "summary": "At a small cafe table, a woman comments on the performer while the man beside her plays acoustic guitar.",
+   "duration": 10.125,
+   "requested": [
+    {
+     "label": "Woman's Voice",
+     "windows": [
+      {
+       "start": 2.5,
+       "end": 5.8,
+       "text": "He plays here every evening"
+      }
+     ]
+    },
+    {
+     "label": "Guitar",
+     "windows": [
+      {
+       "start": 0,
+       "end": 10.125,
+       "text": "Continuous"
+      }
+     ]
+    }
+   ],
+   "outputs": [
+    {
+     "id": "o_2db120c8f052f155",
+     "src": "media/o_2db120c8f052f155.mp4"
+    },
+    {
+     "id": "o_b666c706b88d0865",
+     "src": "media/o_b666c706b88d0865.mp4"
+    },
+    {
+     "id": "o_d83f82bdeb1f0c9e",
+     "src": "media/o_d83f82bdeb1f0c9e.mp4"
+    }
+   ]
+  },
+  {
+   "id": "s_f12d96bbe5fc0adb",
+   "title": "Virtual kitchen",
+   "summary": "In a sunlit animated kitchen, a cook announces breakfast and an older guest offers to set the table.",
+   "duration": 10.125,
+   "requested": [
+    {
+     "label": "Cook Voice",
+     "windows": [
+      {
+       "start": 0.5,
+       "end": 3.2,
+       "text": "Breakfast is nearly ready"
+      }
+     ]
+    },
+    {
+     "label": "Guest Voice",
+     "windows": [
+      {
+       "start": 3.6,
+       "end": 6.4,
+       "text": "I will set the table"
+      }
+     ]
+    }
+   ],
+   "outputs": [
+    {
+     "id": "o_2362b0cd191fcc9f",
+     "src": "media/o_2362b0cd191fcc9f.mp4"
+    },
+    {
+     "id": "o_a5f42d31af73f9c2",
+     "src": "media/o_a5f42d31af73f9c2.mp4"
+    },
+    {
+     "id": "o_ac543ede4764da12",
+     "src": "media/o_ac543ede4764da12.mp4"
+    }
+   ]
+  },
+  {
+   "id": "s_8aa80a751d1cf6df",
+   "title": "Studio introduction",
+   "summary": "In a bright studio, two presenters tell the viewer that the video and its separate voice tracks were generated together.",
+   "duration": 10.125,
+   "requested": [
+    {
+     "label": "Presenter A Voice",
+     "windows": [
+      {
+       "start": 0.5,
+       "end": 3.6,
+       "text": "This video and its sound were generated together"
+      }
+     ]
+    },
+    {
+     "label": "Presenter B Voice",
+     "windows": [
+      {
+       "start": 4.0,
+       "end": 7.4,
+       "text": "And every voice you hear is a separate track"
+      }
+     ]
+    }
+   ],
+   "outputs": [
+    {
+     "id": "o_85c7e3ba366e88b4",
+     "src": "media/o_85c7e3ba366e88b4.mp4"
+    },
+    {
+     "id": "o_9f5a5fb08d4ade26",
+     "src": "media/o_9f5a5fb08d4ade26.mp4"
+    },
+    {
+     "id": "o_fc783211022dbd6a",
+     "src": "media/o_fc783211022dbd6a.mp4"
+    }
+   ]
+  },
+  {
+   "id": "s_c13fd864e38ce048",
+   "title": "Virtual production pitch",
+   "summary": "On a colorful animated set, two presenters explain precise sound timing directly to the viewer.",
+   "duration": 10.125,
+   "requested": [
+    {
+     "label": "Presenter A Voice",
+     "windows": [
+      {
+       "start": 0.5,
+       "end": 3.6,
+       "text": "You can place each sound exactly in time"
+      }
+     ]
+    },
+    {
+     "label": "Presenter B Voice",
+     "windows": [
+      {
+       "start": 4.0,
+       "end": 7.0,
+       "text": "Try it yourself. It is easy"
+      }
+     ]
+    }
+   ],
+   "outputs": [
+    {
+     "id": "o_206d25b69207ff13",
+     "src": "media/o_206d25b69207ff13.mp4"
+    },
+    {
+     "id": "o_84e2ddd0753e2447",
+     "src": "media/o_84e2ddd0753e2447.mp4"
+    },
+    {
+     "id": "o_f1a95f1fe20aadf1",
+     "src": "media/o_f1a95f1fe20aadf1.mp4"
+    }
+   ]
+  },
+  {
+   "id": "s_6032782f1668b40e",
+   "title": "The warm key",
+   "summary": "In a candlelit 1940s office, a woman examines a warm brass key and a detective answers from across the table.",
+   "duration": 10.125,
+   "requested": [
+    {
+     "label": "Woman's Voice",
+     "windows": [
+      {
+       "start": 0.6,
+       "end": 4.0,
+       "text": "The key was warm when I found it"
+      }
+     ]
+    },
+    {
+     "label": "Detective Voice",
+     "windows": [
+      {
+       "start": 4.4,
+       "end": 8.0,
+       "text": "Then someone was here before us"
+      }
+     ]
+    }
+   ],
+   "outputs": [
+    {
+     "id": "o_4bcdf05e744d9fc1",
+     "src": "media/o_4bcdf05e744d9fc1.mp4"
+    },
+    {
+     "id": "o_9a08b7255741c182",
+     "src": "media/o_9a08b7255741c182.mp4"
+    },
+    {
+     "id": "o_fcc0a73264b4ea5a",
+     "src": "media/o_fcc0a73264b4ea5a.mp4"
+    }
+   ]
+  },
+  {
+   "id": "s_3482aa8593e5422b",
+   "title": "Enchanted archive",
+   "summary": "In a lantern-lit magical archive, a cat meows before an archivist and traveler discuss the hidden door it found.",
+   "duration": 10.125,
+   "requested": [
+    {
+     "label": "Cat meow",
+     "windows": [
+      {
+       "start": 0.4,
+       "end": 2.3
+      }
+     ]
+    },
+    {
+     "label": "Archivist Voice",
+     "windows": [
+      {
+       "start": 2.6,
+       "end": 5.5,
+       "text": "The cat found the hidden door"
+      }
+     ]
+    },
+    {
+     "label": "Traveler Voice",
+     "windows": [
+      {
+       "start": 5.9,
+       "end": 9.0,
+       "text": "Then show me where it leads"
+      }
+     ]
+    }
+   ],
+   "outputs": [
+    {
+     "id": "o_24eea6be04cef802",
+     "src": "media/o_24eea6be04cef802.mp4"
+    },
+    {
+     "id": "o_59d29fa85c552a0d",
+     "src": "media/o_59d29fa85c552a0d.mp4"
+    },
+    {
+     "id": "o_a4e296c7773aa0fe",
+     "src": "media/o_a4e296c7773aa0fe.mp4"
+    }
+   ]
+  },
+  {
+   "id": "s_c83dd42c020d904a",
+   "title": "Crystal court",
+   "summary": "In a blue crystal court, a ruler gives an order and a guard responds while a violinist continues playing.",
+   "duration": 10.125,
+   "requested": [
+    {
+     "label": "Ruler Voice",
+     "windows": [
+      {
+       "start": 1,
+       "end": 4,
+       "text": "Open the mountain gate at dawn"
+      }
+     ]
+    },
+    {
+     "label": "Guard Voice",
+     "windows": [
+      {
+       "start": 5,
+       "end": 8,
+       "text": "The riders will be ready"
+      }
+     ]
+    },
+    {
+     "label": "Violin",
+     "windows": [
+      {
+       "start": 0,
+       "end": 10.125,
+       "text": "Continuous"
+      }
+     ]
+    }
+   ],
+   "outputs": [
+    {
+     "id": "o_ce1a3b8ba26a0ce0",
+     "src": "media/o_ce1a3b8ba26a0ce0.mp4"
+    },
+    {
+     "id": "o_d44060e7c25e3083",
+     "src": "media/o_d44060e7c25e3083.mp4"
+    },
+    {
+     "id": "o_f4f0c108138fdf4e",
+     "src": "media/o_f4f0c108138fdf4e.mp4"
+    }
+   ]
+  },
+  {
+   "id": "s_ffb22d51cd53926a",
+   "title": "Android memory lab",
+   "summary": "In a practical-effects robotics lab, a technician confirms a repair and the seated android answers.",
+   "duration": 10.125,
+   "requested": [
+    {
+     "label": "Technician Voice",
+     "windows": [
+      {
+       "start": 1.0,
+       "end": 4.0,
+       "text": "Your memory is stable now"
+      }
+     ]
+    },
+    {
+     "label": "Android Voice",
+     "windows": [
+      {
+       "start": 4.5,
+       "end": 7.5,
+       "text": "Then I am ready to wake"
+      }
+     ]
+    }
+   ],
+   "outputs": [
+    {
+     "id": "o_82bef8907297cc27",
+     "src": "media/o_82bef8907297cc27.mp4"
+    },
+    {
+     "id": "o_b917fe076f8e6db0",
+     "src": "media/o_b917fe076f8e6db0.mp4"
+    },
+    {
+     "id": "o_e8351fe2a3913bcb",
+     "src": "media/o_e8351fe2a3913bcb.mp4"
+    }
+   ]
+  },
+  {
+   "id": "s_4f0048e7ed296824",
+   "title": "Neon biology lab",
+   "summary": "In a neon biology lab, a dog and cat call out before a scientist and android discuss their readings.",
+   "duration": 10.125,
+   "requested": [
+    {
+     "label": "Dog bark",
+     "windows": [
+      {
+       "start": 0.4,
+       "end": 2.8
+      }
+     ]
+    },
+    {
+     "label": "Cat meow",
+     "windows": [
+      {
+       "start": 0.4,
+       "end": 2.8
+      }
+     ]
+    },
+    {
+     "label": "Scientist Voice",
+     "windows": [
+      {
+       "start": 3.1,
+       "end": 6,
+       "text": "Both animals are calm now"
+      }
+     ]
+    },
+    {
+     "label": "Android Voice",
+     "windows": [
+      {
+       "start": 6.3,
+       "end": 9.2,
+       "text": "Their signals match perfectly"
+      }
+     ]
+    }
+   ],
+   "outputs": [
+    {
+     "id": "o_8be0eafdba75d676",
+     "src": "media/o_8be0eafdba75d676.mp4"
+    },
+    {
+     "id": "o_a044253c8573d2a1",
+     "src": "media/o_a044253c8573d2a1.mp4"
+    },
+    {
+     "id": "o_de4ada7132be246d",
+     "src": "media/o_de4ada7132be246d.mp4"
+    }
+   ]
+  },
+  {
+   "id": "s_a70faef3f11a30b6",
+   "title": "Orbital award stage",
+   "summary": "On an orbital award stage, piano and applause accompany a presenter and astronaut exchanging hopeful remarks.",
+   "duration": 10.125,
+   "requested": [
+    {
+     "label": "Audience applause",
+     "windows": [
+      {
+       "start": 0.3,
+       "end": 2.8
+      }
+     ]
+    },
+    {
+     "label": "Piano",
+     "windows": [
+      {
+       "start": 0,
+       "end": 10.125,
+       "text": "Continuous"
+      }
+     ]
+    },
+    {
+     "label": "Presenter Voice",
+     "windows": [
+      {
+       "start": 3.0,
+       "end": 5.9,
+       "text": "This mission belongs to all of us"
+      }
+     ]
+    },
+    {
+     "label": "Astronaut Voice",
+     "windows": [
+      {
+       "start": 6.2,
+       "end": 9.3,
+       "text": "Then let the next journey begin"
+      }
+     ]
+    }
+   ],
+   "outputs": [
+    {
+     "id": "o_139fad3e8b738989",
+     "src": "media/o_139fad3e8b738989.mp4"
+    },
+    {
+     "id": "o_189dd622ddfdee5e",
+     "src": "media/o_189dd622ddfdee5e.mp4"
+    },
+    {
+     "id": "o_273fae0a7084f2c7",
+     "src": "media/o_273fae0a7084f2c7.mp4"
+    }
+   ]
+  },
+  {
+   "id": "s_bca2dac992c7806b",
+   "title": "Clockwork airship",
+   "summary": "Inside a brass airship cabin, a door sound is followed by the captain's footsteps and order while a guitarist keeps playing.",
+   "duration": 10.125,
+   "requested": [
+    {
+     "label": "Door sound",
+     "windows": [
+      {
+       "start": 0.4,
+       "end": 2.8
+      }
+     ]
+    },
+    {
+     "label": "Footsteps",
+     "windows": [
+      {
+       "start": 3,
+       "end": 5.5
+      }
+     ]
+    },
+    {
+     "label": "Guitar",
+     "windows": [
+      {
+       "start": 0,
+       "end": 10.125,
+       "text": "Continuous"
+      }
+     ]
+    },
+    {
+     "label": "Captain Voice",
+     "windows": [
+      {
+       "start": 6,
+       "end": 9.2,
+       "text": "Set a course above the storm"
+      }
+     ]
+    }
+   ],
+   "outputs": [
+    {
+     "id": "o_a9d20e0b25e5bbad",
+     "src": "media/o_a9d20e0b25e5bbad.mp4"
+    },
+    {
+     "id": "o_c41d5c674e53660a",
+     "src": "media/o_c41d5c674e53660a.mp4"
+    },
+    {
+     "id": "o_c861c085a1e24b95",
+     "src": "media/o_c861c085a1e24b95.mp4"
+    }
+   ]
+  }
+ ]
+}
