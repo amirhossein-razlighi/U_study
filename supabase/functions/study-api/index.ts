@@ -1,6 +1,7 @@
 // The study site calls this function so that no Supabase key ever reaches the browser.
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are injected by Supabase at runtime.
-// Callers are authorized by the study access value, checked in the database functions.
+// Participants are authorized by the study access value and the admin panel by its
+// password. Both are checked inside the database functions.
 
 const ALLOWED_ORIGIN = "https://amirhossein-razlighi.github.io";
 const MAX_BODY_CHARS = 256_000;
@@ -15,7 +16,7 @@ const CORS = {
 function reply(status: number, body: unknown) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...CORS, "Content-Type": "application/json" },
+    headers: { ...CORS, "Content-Type": "application/json", "Cache-Control": "no-store" },
   });
 }
 
@@ -28,6 +29,18 @@ async function callDatabase(name: string, args: unknown) {
   });
 }
 
+async function adminData(password: unknown) {
+  if (typeof password !== "string" || password.length > 200) return reply(401, { status: "denied" });
+  const res = await callDatabase("study_admin_data", { p_password: password });
+  if (!res.ok) {
+    console.error("admin query failed", res.status, await res.text());
+    return reply(500, { status: "error" });
+  }
+  const data = await res.json();
+  if (data.status === "ok") return reply(200, data);
+  return reply(data.status === "locked" ? 429 : 401, { status: data.status });
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
   if (req.method !== "POST") return reply(405, { error: "method not allowed" });
@@ -35,12 +48,13 @@ Deno.serve(async (req: Request) => {
   const raw = await req.text();
   if (raw.length > MAX_BODY_CHARS) return reply(413, { error: "too large" });
 
-  let body: { action?: string; access?: unknown; payload?: unknown };
+  let body: { action?: string; access?: unknown; payload?: unknown; password?: unknown };
   try {
     body = JSON.parse(raw);
   } catch {
     return reply(400, { error: "invalid json" });
   }
+  if (body.action === "admin") return await adminData(body.password);
   if (typeof body.access !== "string") return reply(400, { error: "missing access" });
 
   let res: Response;

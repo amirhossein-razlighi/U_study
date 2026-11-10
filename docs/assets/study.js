@@ -8,6 +8,7 @@
   const OUTPUT_COLORS = ['#2563eb', '#c026d3', '#d97706'];
   const SOURCE_COLORS = ['#176875', '#974213', '#4d6926', '#754283'];
   const ORDINALS = { 1: '1st', 2: '2nd', 3: '3rd' };
+  const REQUEST_TIMEOUT_MS = 30000;
   const WHAT_TO_JUDGE = [
     ['Sounds', 'Can you hear every requested sound, and does each one sound natural?'],
     ['Timing', 'Does each sound happen when the timeline says it should?'],
@@ -24,6 +25,7 @@
   let sceneById;
   let draft;
   let teardownScene = () => {};
+  let flushProgress = () => {};
 
   function el(tag, attrs = {}, ...children) {
     const node = document.createElement(tag);
@@ -56,6 +58,7 @@
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action, access: accessValue, payload }),
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });
     if (!res.ok) throw new Error(`${res.status} ${await res.text()}`);
     return res.json();
@@ -115,7 +118,6 @@
       outputOrder,
       answers: {},
       index: 0,
-      feedback: '',
     };
   }
 
@@ -200,7 +202,7 @@
     const answer = answerFor(sceneId);
     const ids = draft.outputOrder[sceneId];
     const outputs = ids.map((id) => scene.outputs.find((o) => o.id === id));
-    const enteredAt = Date.now();
+    let segmentStart = Date.now();
     const videos = [];
     const rankButtons = [];
     let active = null;
@@ -309,15 +311,21 @@
         rankButton);
     });
 
+    function flushScene() {
+      answer.activeMs += Date.now() - segmentStart;
+      segmentStart = Date.now();
+      saveDraft();
+    }
+
     function leaveScene() {
       stopFrames();
-      answer.activeMs += Date.now() - enteredAt;
+      flushScene();
+      flushProgress = () => {};
       for (const video of videos) {
         video.pause();
         video.removeAttribute('src');
         video.load();
       }
-      saveDraft();
     }
 
     function move(step) {
@@ -325,7 +333,7 @@
       teardownScene = () => {};
       draft.index += step;
       saveDraft();
-      if (draft.index >= draft.sceneOrder.length) renderFinal();
+      if (draft.index >= draft.sceneOrder.length) submitResponse();
       else renderScene();
     }
 
@@ -360,6 +368,7 @@
         el('i', { style: `width:${((draft.index + 1) / total) * 100}%` })),
       workspace);
     teardownScene = leaveScene;
+    flushProgress = flushScene;
     refreshRanks();
   }
 
@@ -393,11 +402,14 @@
       submitted_at: new Date().toISOString(),
       scene_order: draft.sceneOrder,
       answers,
-      feedback: draft.feedback.trim() || null,
     };
   }
 
-  function renderFinal() {
+  function statusIcon(state) {
+    return el('div', { class: `submit-icon ${state}`, 'aria-hidden': 'true' });
+  }
+
+  async function submitResponse() {
     const firstOpen = debug ? -1 : draft.sceneOrder.findIndex((id) => !sceneDone(id));
     if (firstOpen >= 0) {
       draft.index = firstOpen;
@@ -406,58 +418,65 @@
       return;
     }
 
-    const textarea = el('textarea', { maxlength: '2000', on: { input: (e) => { draft.feedback = e.target.value; saveDraft(); } } });
-    textarea.value = draft.feedback;
-    const error = el('p', { class: 'error-text', role: 'alert', hidden: 'hidden' });
-    const back = el('button', {
-      class: 'btn',
-      type: 'button',
-      on: { click: () => { draft.index = draft.sceneOrder.length - 1; saveDraft(); renderScene(); } },
-    }, 'Back');
+    show(el('div', { class: 'notice-page' },
+      el('main', { class: 'submit-screen', role: 'status' }, statusIcon('loading'), el('h1', {}, 'Submitting your response…'))));
 
-    const submit = el('button', {
+    const payload = buildPayload();
+    if (!canSend) {
+      renderSubmitted(payload);
+      return;
+    }
+    try {
+      await callApi('submit', payload);
+      renderSubmitted(null);
+    } catch (e) {
+      console.error(e);
+      renderSubmitFailed(payload);
+    }
+  }
+
+  function renderSubmitted(dryRunPayload) {
+    clearDraft();
+    draft = null;
+    show(el('div', { class: 'notice-page' },
+      el('main', { class: 'submit-screen', role: 'status' },
+        statusIcon('success'),
+        el('h1', {}, 'Thank you!'),
+        body(dryRunPayload ? 'Debug run. Nothing was sent. This is what would have been submitted.' : 'Your response has been recorded. You can close this page.'),
+        dryRunPayload ? el('pre', { class: 'payload', id: 'dry-run-payload' }, JSON.stringify(dryRunPayload, null, 2)) : null,
+        el('div', { class: 'actions' }, el('button', { class: 'btn', type: 'button', on: { click: startNew } }, 'Start another response')))));
+  }
+
+  // The draft is kept, so reopening the study link can still retry the submission.
+  function renderSubmitFailed(payload) {
+    const json = JSON.stringify(payload);
+    const box = el('textarea', { class: 'failure-json', readonly: 'readonly', 'aria-label': 'Your response as JSON' });
+    box.value = json;
+    const copy = el('button', {
       class: 'btn primary',
       type: 'button',
       on: {
         click: async () => {
-          submit.disabled = true;
-          error.hidden = true;
-          const payload = buildPayload();
-          if (!canSend) {
-            if (debug) { renderDone(payload); return; }
-            error.textContent = 'This study link cannot save responses. Please contact the research team.';
-            error.hidden = false;
-            submit.disabled = false;
-            return;
-          }
+          box.select();
           try {
-            await callApi('submit', payload);
-            renderDone(null);
-          } catch (e) {
-            console.error(e);
-            error.textContent = 'Your response could not be sent. Your answers are still saved in this browser, so please try again.';
-            error.hidden = false;
-            submit.disabled = false;
+            await navigator.clipboard.writeText(json);
+          } catch {
+            document.execCommand('copy');
           }
+          copy.textContent = 'Copied';
         },
       },
-    }, 'Submit response');
+    }, 'Copy response');
 
-    notice('Almost done.', 'Final step',
-      body(`You have ranked all ${draft.sceneOrder.length} scenes. Your answers are sent only when you press Submit.`),
-      el('label', {}, 'Anything you would like to tell us? (optional)', textarea),
-      error,
-      el('div', { class: 'actions' }, back, submit));
-  }
-
-  function renderDone(dryRunPayload) {
-    clearDraft();
-    draft = null;
-    const again = el('button', { class: 'btn primary', type: 'button', on: { click: startNew } }, 'Start another response');
-    notice('Thank you.', 'Response received',
-      body(dryRunPayload ? 'Debug run. Nothing was sent. This is what would have been submitted.' : 'Your response has been recorded. You can close this page.'),
-      dryRunPayload ? el('pre', { class: 'payload', id: 'dry-run-payload' }, JSON.stringify(dryRunPayload, null, 2)) : null,
-      el('div', { class: 'actions' }, again));
+    show(el('div', { class: 'notice-page' },
+      el('main', { class: 'submit-screen failed', role: 'alert' },
+        statusIcon('failure'),
+        el('h1', {}, 'We could not save your response.'),
+        body('Your rankings are not lost. Please copy the text below and send it to us in a DM, and we will add your response by hand.'),
+        box,
+        el('div', { class: 'actions' },
+          copy,
+          el('button', { class: 'btn', type: 'button', on: { click: submitResponse } }, 'Try sending again')))));
   }
 
   /* Entry screens. */
@@ -465,6 +484,8 @@
   function startNew() {
     draft = newDraft();
     saveDraft();
+    // Asks the browser not to evict the saved progress under storage pressure.
+    navigator.storage?.persist?.().catch(() => {});
     renderScene();
   }
 
@@ -477,7 +498,8 @@
       el('ul', {},
         el('li', {}, 'Participation is voluntary and anonymous. We do not ask for your name or email.'),
         el('li', {}, 'All media you will see and hear are synthetic.'),
-        el('li', {}, 'You may stop at any time. Nothing is sent until you submit on the last page.'),
+        el('li', {}, 'You may stop at any time. Your progress is saved in this browser, so you can close the page and continue later from the same link.'),
+        el('li', {}, 'Your answers are sent automatically after the last scene.'),
         el('li', {}, 'A desktop or laptop, headphones, and a quiet room are recommended.')),
       el('div', { class: 'actions' },
         el('button', { class: 'btn primary', type: 'button', on: { click: startNew } }, 'I agree, start the study')));
@@ -488,7 +510,7 @@
     notice('Welcome back.', 'Unfinished response',
       body(`You have ranked ${answered} of ${saved.sceneOrder.length} scenes in this browser.`),
       el('div', { class: 'actions' },
-        el('button', { class: 'btn primary', type: 'button', on: { click: () => { draft = saved; if (draft.index >= draft.sceneOrder.length) renderFinal(); else renderScene(); } } }, 'Resume'),
+        el('button', { class: 'btn primary', type: 'button', on: { click: () => { draft = saved; if (draft.index >= draft.sceneOrder.length) submitResponse(); else renderScene(); } } }, 'Resume'),
         el('button', { class: 'btn', type: 'button', on: { click: startNew } }, 'Start a new response')));
   }
 
@@ -527,6 +549,12 @@
     if (saved) renderResume(saved);
     else renderConsent();
   }
+
+  // Mobile browsers can discard a backgrounded tab without firing pagehide, so save on both.
+  window.addEventListener('pagehide', () => flushProgress());
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') flushProgress();
+  });
 
   boot();
 })();

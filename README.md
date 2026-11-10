@@ -42,4 +42,8 @@ Then run `python3 tools/build_study.py`. Change `version` whenever scenes change
 
 ## Analysis
 
-Use the `study_rankings` view in the Supabase SQL editor, and join `output_id` to `.private/codebook.json` for method names.
+Sign in at `/admin/` for the results panel. The password and the output-to-method map exist only in Supabase (see `supabase/002_admin_access.sql`), so results stay private even though this repo is public.
+
+If a participant's submission fails, the study shows them their response as JSON to send you. Add it in the Supabase SQL editor with `select public.submit_study_response('<access value>', '<their JSON>'::jsonb);`.
+
+For custom queries, use the `study_rankings` view in the Supabase SQL editor, and join `output_id` to `study_codebook` for method names.
