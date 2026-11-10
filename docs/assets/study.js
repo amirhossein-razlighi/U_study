@@ -128,11 +128,95 @@
 
   const sceneDone = (id) => isComplete(answerFor(id).picks, draft.outputOrder[id].length);
 
+  const shortLabel = (label) => label.replace(/'s Voice$/, '').replace(/ Voice$/, '');
+  const sourceColor = (index) => SOURCE_COLORS[index % SOURCE_COLORS.length];
+
+  /* Compact timeline for small screens: fits the width, and sits under each video. */
+
+  function mountMiniTimeline(scene, onSeek, showNow) {
+    const duration = Number(scene.duration) || 10;
+    const ticks = el('div', { class: 'mini-ticks', 'aria-hidden': 'true' });
+    const lastTick = Math.floor(Math.ceil(duration) / 2) * 2;
+    for (let t = 0; t <= lastTick; t += 2) {
+      const tick = el('span', { class: t === 0 ? 'first' : t === lastTick ? 'last' : undefined }, `${t}s`);
+      tick.style.left = `${Math.min((t / duration) * 100, 100)}%`;
+      ticks.append(tick);
+    }
+
+    const cursors = [];
+    const rows = (scene.requested || []).map((source, i) => {
+      const lane = el('div', {
+        class: 'mini-lane',
+        vars: { '--grid': `${(2 / duration) * 100}%` },
+        on: onSeek ? {
+          click: (e) => {
+            const box = e.currentTarget.getBoundingClientRect();
+            onSeek(Math.max(0, Math.min(duration, ((e.clientX - box.left) / box.width) * duration)));
+          },
+        } : {},
+      });
+      for (const w of source.windows || []) {
+        const end = Math.min(duration, w.end);
+        const block = el('span', { class: 'mini-block', title: `${source.label} · ${w.start}–${end} s` });
+        block.style.left = `${(Math.max(0, w.start) / duration) * 100}%`;
+        block.style.width = `${((end - Math.max(0, w.start)) / duration) * 100}%`;
+        lane.append(block);
+      }
+      const cursor = el('i', { class: 'mini-cursor', hidden: 'hidden', 'aria-hidden': 'true' });
+      cursors.push(cursor);
+      lane.append(cursor);
+      return el('div', { class: 'mini-row', vars: { '--source': sourceColor(i) } },
+        el('span', { class: 'mini-label' }, shortLabel(source.label)), lane);
+    });
+
+    const now = showNow ? el('p', { class: 'mini-now' }, 'Press play and follow this timeline.') : null;
+    let shownKey = '';
+
+    function nowItems(time) {
+      return (scene.requested || []).flatMap((source, i) => (source.windows || [])
+        .filter((w) => time >= w.start && time < Math.min(duration, w.end))
+        .map((w) => ({ source, index: i, window: w })));
+    }
+
+    return {
+      node: el('div', { class: 'mini-timeline' },
+        el('div', { class: 'mini-head' }, el('span', {}), ticks),
+        ...rows,
+        now),
+      update(time) {
+        for (const cursor of cursors) {
+          cursor.hidden = false;
+          cursor.style.left = `${Math.min(100, (time / duration) * 100)}%`;
+        }
+        if (!now) return;
+        const items = nowItems(time);
+        const key = items.map((item) => `${item.index}:${item.window.start}`).join('|');
+        if (key === shownKey && shownKey) return;
+        shownKey = key || 'none';
+        if (!items.length) {
+          now.replaceChildren('No requested sound right now.');
+          return;
+        }
+        now.replaceChildren(el('strong', {}, 'Should hear now: '), ...items.flatMap(({ source, index, window: w }, position) => {
+          const spoken = w.text && w.text !== 'Continuous' ? ` “${w.text}”` : '';
+          return [position ? ', ' : null, el('span', { class: 'mini-now-item', vars: { '--source': sourceColor(index) } }, `${shortLabel(source.label)}${spoken}`)];
+        }).filter(Boolean));
+      },
+    };
+  }
+
   /* Requested timeline. One colored playhead per output. */
 
   function mountTimeline(scene, onSeek) {
     const duration = Number(scene.duration) || 10;
     const clock = el('span', { class: 'timeline-clock' }, '0.00 s');
+    const events = (scene.requested || [])
+      .flatMap((source, index) => (source.windows || []).map((w) => ({ source, index, w })))
+      .sort((a, b) => a.w.start - b.w.start);
+    const script = el('ol', { class: 'timeline-script' }, ...events.map(({ source, index, w }) =>
+      el('li', { vars: { '--source': sourceColor(index) } },
+        el('span', { class: 'script-time' }, w.text === 'Continuous' ? 'Whole clip' : `${w.start}–${Math.min(duration, w.end)} s`),
+        el('span', { class: 'script-what' }, el('b', {}, shortLabel(source.label)), w.text && w.text !== 'Continuous' ? ` “${w.text}”` : ''))));
     const ticks = el('div', { class: 'timeline-ticks' });
     const lastTick = Math.floor(Math.ceil(duration) / 2) * 2;
     for (let t = 0; t <= lastTick; t += 2) {
@@ -176,8 +260,11 @@
     const node = el('section', { class: 'timeline-panel', 'aria-label': 'Requested sound timeline' },
       el('div', { class: 'timeline-heading' },
         el('h2', {}, 'Requested sound timeline'),
-        el('p', {}, 'Filled blocks show when each source should sound. Select a time to seek the video you last played.'),
+        el('p', { class: 'note-wide' }, 'Filled blocks show when each source should sound. Select a time to seek the video you last played.'),
+        el('p', { class: 'note-phone' }, 'Each video below has its own copy of this timeline. Follow it while you watch.'),
         clock),
+      mountMiniTimeline(scene, null, false).node,
+      script,
       el('div', { class: 'timeline-scroll', tabindex: '0', 'aria-label': 'Timeline' }, chart),
       el('div', { class: 'timeline-legend' }, ...LETTERS.map((letter, i) =>
         el('span', { vars: { '--out': OUTPUT_COLORS[i] } }, `Output ${letter} playhead`))));
@@ -208,15 +295,20 @@
     let active = null;
     let frame = 0;
 
+    const miniTimelines = [];
+    const showTime = (index, time) => {
+      timeline.update(index, time);
+      miniTimelines[index].update(time);
+    };
     const timeline = mountTimeline(scene, (time) => {
       const index = active === null ? 0 : active;
       videos[index].currentTime = time;
-      timeline.update(index, time);
+      showTime(index, time);
     });
 
     const stopFrames = () => { cancelAnimationFrame(frame); frame = 0; };
     const runFrames = () => {
-      if (active !== null) timeline.update(active, videos[active].currentTime);
+      if (active !== null) showTime(active, videos[active].currentTime);
       frame = requestAnimationFrame(runFrames);
     };
 
@@ -279,17 +371,25 @@
           ended: () => { if (active === i) stopFrames(); saveDraft(); },
           seeked: () => {
             last = video.currentTime;
-            timeline.update(i, video.currentTime);
+            showTime(i, video.currentTime);
           },
           timeupdate: () => {
             const delta = video.currentTime - last;
             if (delta > 0 && delta < 1.5) playback.seconds += delta;
             last = video.currentTime;
+            if (active === i) showTime(i, video.currentTime);
           },
           error: () => { error.hidden = false; },
         },
       });
       videos.push(video);
+
+      const mini = mountMiniTimeline(scene, (time) => {
+        active = i;
+        video.currentTime = time;
+        showTime(i, time);
+      }, true);
+      miniTimelines.push(mini);
 
       const rankButton = el('button', {
         class: 'rank-btn',
@@ -308,6 +408,7 @@
         el('h3', { class: 'output-name' }, `Output ${LETTERS[i]}`),
         el('div', { class: 'video-frame' }, video),
         error,
+        mini.node,
         rankButton);
     });
 
@@ -346,8 +447,10 @@
       el('p', { class: 'summary' }, scene.summary),
       scene.prompt ? el('details', {}, el('summary', {}, 'Full scene description'), el('p', {}, scene.prompt)) : null,
       el('div', { class: 'task' },
-        el('strong', {}, 'What to pay attention to'),
-        ...WHAT_TO_JUDGE.map(([name, text]) => el('p', {}, el('b', {}, `${name}. `), text)),
+        // Collapsed on phones so that the timeline and videos come first.
+        el('details', { open: window.matchMedia('(max-width: 640px)').matches ? undefined : 'open' },
+          el('summary', {}, 'What to pay attention to'),
+          ...WHAT_TO_JUDGE.map(([name, text]) => el('p', {}, el('b', {}, `${name}. `), text))),
         el('strong', { class: 'task-next' }, 'How to rank'),
         el('p', {}, 'Tap the videos in order, best first. The last one fills in by itself. Tap a ranked video again to undo.')));
 
@@ -502,7 +605,18 @@
         el('li', {}, 'Your answers are sent automatically after the last scene.'),
         el('li', {}, 'A desktop or laptop, headphones, and a quiet room are recommended.')),
       el('div', { class: 'actions' },
-        el('button', { class: 'btn primary', type: 'button', on: { click: startNew } }, 'I agree, start the study')));
+        el('button', { class: 'btn primary', type: 'button', on: { click: renderIntro } }, 'I agree, continue')));
+  }
+
+  function renderIntro() {
+    show(el('div', { class: 'notice-page' },
+      el('main', { class: 'intro-screen' },
+        el('p', { class: 'eyebrow' }, 'Before you start'),
+        el('h1', {}, 'What to look and listen for'),
+        body('Please watch this short video with the sound on.'),
+        el('video', { class: 'intro-video', src: 'media/intro.mp4', controls: 'controls', playsinline: 'playsinline', preload: 'metadata', controlslist: 'nodownload noplaybackrate', disablepictureinpicture: 'disablepictureinpicture' }),
+        el('div', { class: 'actions' },
+          el('button', { class: 'btn primary', type: 'button', on: { click: startNew } }, 'Start the study')))));
   }
 
   function renderResume(saved) {

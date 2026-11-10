@@ -1,0 +1,9 @@
+{
+  "intro": "Thanks for helping us. In this study, you will watch four AI generated versions of the same scene, and rank them from best to worst. Here is what to look and listen for.",
+  "timeline": "Each scene comes with a timeline. Every row is a sound that was requested, and the colored blocks show exactly when it should be heard. As a video plays, a line moves across the timeline, so you can follow along.",
+  "timing": "First, timing. Each sound should happen inside its block. If a line of dialogue starts too early, or too late, that video did not respect the timeline.",
+  "hearing": "Second, can you hear every requested sound? Sometimes a sound is simply missing. Also watch for sounds that take turns. If piano and violin are both requested for the whole clip, you should hear both of them together, all the way through. Not one, and then the other.",
+  "quality": "Third, audio quality. Listen for clean, clear sound. Hiss, distortion, robotic voices, or muffled speech should count against a video.",
+  "natural": "Fourth, naturalness. Do the sounds fit what you see? Do the lips match the words? And do the voices sound like they are in the same room?",
+  "overall": "Finally, keep all of this in mind, and decide which video you prefer overall. Tap the best one first, then the next best. The last one fills in by itself, and you can tap again to undo. Please use headphones if you can. Thank you!"
+}
