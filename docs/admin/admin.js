@@ -7,13 +7,14 @@
   const tip = document.getElementById('tip');
 
   // Fixed order, assigned to methods sorted by name, so a method always keeps its color.
-  const SERIES_COLORS = ['#2a78d6', '#eb6834', '#1baf7a'];
-  const RANK_LABELS = ['1st', '2nd', '3rd'];
-  const LETTERS = ['A', 'B', 'C'];
+  const SERIES_COLORS = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100'];
+  const RANK_LABELS = ['1st', '2nd', '3rd', '4th'];
+  const LETTERS = ['A', 'B', 'C', 'D'];
 
   // Held in memory only, so that Refresh works and closing the tab signs out.
   let password = '';
   let includeDebug = false;
+  let rankCount = RANK_LABELS.length;
 
   function el(tag, attrs = {}, ...children) {
     const node = document.createElement(tag);
@@ -45,7 +46,7 @@
     return Number.isNaN(date.getTime()) ? '–' : date.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
   }
 
-  const rankAxisPercent = (rank) => ((rank - 1) / 2) * 100;
+  const rankAxisPercent = (rank) => ((rank - 1) / (rankCount - 1)) * 100;
 
   /* Sign-in. */
 
@@ -133,7 +134,7 @@
       const lane = el('div', { class: 'dot-lane' });
       if (summary.low !== null) {
         const low = rankAxisPercent(Math.max(1, summary.low));
-        const high = rankAxisPercent(Math.min(3, summary.high));
+        const high = rankAxisPercent(Math.min(rankCount, summary.high));
         lane.append(el('i', { class: 'ci', style: `left:${low}%;width:${high - low}%` }));
       }
       if (summary.mean !== null) {
@@ -149,30 +150,33 @@
         lane,
         el('span', { class: 'dot-value' }, fixed(summary.mean)));
     });
-    const axis = el('div', { class: 'dot-row dot-axis' }, el('span', {}), el('div', { class: 'axis-labels' },
-      el('span', {}, '1 (best)'), el('span', {}, '2'), el('span', {}, '3 (worst)')), el('span', {}));
+    const axisLabels = stats.methods.map((_, i) => {
+      const rank = i + 1;
+      return el('span', {}, rank === 1 ? '1 (best)' : rank === rankCount ? `${rank} (worst)` : String(rank));
+    });
+    const axis = el('div', { class: 'dot-row dot-axis' }, el('span', {}), el('div', { class: 'axis-labels' }, ...axisLabels), el('span', {}));
     return el('div', { class: 'dot-chart' }, ...rows, axis);
   }
 
   function rankDistribution(stats) {
-    const shades = ['#155a50', '#3a9385', '#86b8ae'];
+    const shades = ['#0f4c43', '#2a7a6e', '#57a195', '#86b8ae'];
     const rows = stats.methodSummary.map((summary, index) =>
       el('div', { class: 'stack-row' },
         methodName(summary.method, index),
         el('div', { class: 'stack' }, ...summary.rankShares.map((share, rank) => {
           if (!share) return null;
           return el('i', {
-            style: `flex:${share} 0 0;background:${shades[rank]};color:${rank === 0 ? '#fff' : 'var(--ink)'}`,
+            style: `flex:${share} 0 0;background:${shades[rank]};color:${rank <= 1 ? '#fff' : 'var(--ink)'}`,
             'data-tip': `${summary.method}: ranked ${RANK_LABELS[rank]} in ${pct(share)} of scenes`,
           }, share >= 0.1 ? pct(share) : '');
         }))));
-    return el('div', {}, legend(RANK_LABELS.map((label, i) => [label, shades[i]])), ...rows);
+    return el('div', {}, legend(RANK_LABELS.slice(0, rankCount).map((label, i) => [label, shades[i]])), ...rows);
   }
 
   function sceneHeatmap(stats) {
     const shade = (rank) => {
       if (rank === null) return { background: '#f1efe8', color: 'var(--muted)' };
-      const strength = (3 - rank) / 2;
+      const strength = (rankCount - rank) / (rankCount - 1);
       const mix = (from, to) => Math.round(from + (to - from) * strength);
       return { background: `rgb(${mix(238, 32)},${mix(245, 120)},${mix(243, 108)})`, color: strength > 0.55 ? '#fff' : 'var(--ink)' };
     };
@@ -261,6 +265,7 @@
   function renderPanel(data) {
     const debugCount = data.responses.filter((r) => r.is_debug).length;
     const stats = computeStats({ ...data, responses: data.responses.filter((r) => includeDebug || !r.is_debug) });
+    rankCount = stats.methods.length;
     const none = stats.responseCount === 0;
     const excludedDebug = includeDebug ? 0 : debugCount;
 
@@ -315,9 +320,7 @@
       el('th', { scope: 'row' }, methodName(s.method, i)),
       el('td', { class: 'num' }, fixed(s.mean)),
       el('td', { class: 'num' }, s.low === null ? '–' : `${fixed(s.low)} to ${fixed(s.high)}`),
-      el('td', { class: 'num' }, pct(s.rankShares[0])),
-      el('td', { class: 'num' }, pct(s.rankShares[1])),
-      el('td', { class: 'num' }, pct(s.rankShares[2])),
+      ...s.rankShares.map((share) => el('td', { class: 'num' }, pct(share))),
       el('td', { class: 'num' }, String(s.n)),
     ]);
 
@@ -362,11 +365,11 @@
         legend(stats.methods.map((m, i) => [m, SERIES_COLORS[i]])),
         meanRankChart(stats),
         el('p', { class: 'stat-line' }, f
-          ? `Friedman test across ${f.n} participants: χ²(2) = ${fixed(f.chi2)}, p = ${pValue(f.p)}.`
+          ? `Friedman test across ${f.n} participants: χ²(${f.df}) = ${fixed(f.chi2)}, p = ${pValue(f.p)}.`
           : 'The Friedman test needs at least two participants.'),
-        table(['Method', 'Mean rank', '95% CI', '1st', '2nd', '3rd', 'Judgments'], methodRows)),
+        table(['Method', 'Mean rank', '95% CI', ...RANK_LABELS.slice(0, rankCount), 'Judgments'], methodRows)),
 
-      section('Rank distribution', 'How often each method was placed 1st, 2nd or 3rd.', rankDistribution(stats)),
+      section('Rank distribution', 'How often each method was placed at each rank.', rankDistribution(stats)),
 
       section('Pairwise preference', 'Scene preference is the share of judgments placing each method above the other. Participants are counted by who gave each method the better mean rank, tested with an exact sign test.',
         table(['Pair', 'Scene preference', 'Participants', 'p', 'Holm p'], pairRows)),
@@ -375,7 +378,7 @@
 
       el('div', { class: 'columns' },
         section('Playback by method', 'Whether participants actually watched each method.', table(['Method', 'Played', 'Mean plays', 'Mean listened'], engagementRows)),
-        section('Position balance', 'Randomized positions should give similar counts and mean ranks near 2.', table(['Position', 'Mean rank', ...stats.methods], positionRows))),
+        section('Position balance', `Randomized positions should give similar counts and mean ranks near ${fixed((rankCount + 1) / 2, 1)}.`, table(['Position', 'Mean rank', ...stats.methods], positionRows))),
 
       section('Responses per day', null, perDayChart(stats)),
 

@@ -61,6 +61,35 @@
     return adjusted;
   }
 
+  function erfc(x) {
+    const z = Math.abs(x);
+    const t = 1 / (1 + 0.5 * z);
+    const r = t * Math.exp(-z * z - 1.26551223 + t * (1.00002368 + t * (0.37409196 + t * (0.09678418
+      + t * (-0.18628806 + t * (0.27886807 + t * (-1.13520398 + t * (1.48851587 + t * (-0.82215223 + t * 0.17087277)))))))));
+    return x >= 0 ? r : 2 - r;
+  }
+
+  // Upper tail of the chi-square distribution for an integer number of degrees of freedom.
+  function chiSquareSurvival(x, df) {
+    const h = x / 2;
+    if (df % 2 === 0) {
+      let term = 1;
+      let total = 1;
+      for (let i = 1; i < df / 2; i++) {
+        term *= h / i;
+        total += term;
+      }
+      return Math.exp(-h) * total;
+    }
+    let term = Math.sqrt(h) / (Math.sqrt(Math.PI) / 2);
+    let total = 0;
+    for (let i = 1; i <= (df - 1) / 2; i++) {
+      total += term;
+      term *= h / (i + 0.5);
+    }
+    return erfc(Math.sqrt(h)) + Math.exp(-h) * total;
+  }
+
   function averageRanks(values) {
     const order = values.map((v, i) => [v, i]).sort((a, b) => a[0] - b[0]);
     const ranks = new Array(values.length);
@@ -76,11 +105,12 @@
     return { ranks, ties };
   }
 
-  // Friedman test with tie correction. With three methods, df = 2 and p = exp(-chi2 / 2).
+  // Friedman test with tie correction.
   function friedman(blocks) {
     const n = blocks.length;
     const k = n ? blocks[0].length : 0;
-    if (n < 2 || k !== 3) return null;
+    if (n < 2 || k < 2) return null;
+    const df = k - 1;
     const totals = new Array(k).fill(0);
     let ties = 0;
     for (const block of blocks) {
@@ -89,10 +119,10 @@
       ties += result.ties;
     }
     const correction = 1 - ties / (n * k * (k * k - 1));
-    if (correction <= 0) return { chi2: 0, p: 1, n };
+    if (correction <= 0) return { chi2: 0, p: 1, n, df };
     const spread = sum(totals.map((t) => (t / n - (k + 1) / 2) ** 2));
     const chi2 = ((12 * n) / (k * (k + 1)) * spread) / correction;
-    return { chi2, p: Math.exp(-chi2 / 2), n };
+    return { chi2, p: chiSquareSurvival(chi2, df), n, df };
   }
 
   function flatten(data, codebook) {
@@ -150,7 +180,7 @@
         mean: mean(rows.map((r) => r.rank)),
         low: ci.low,
         high: ci.high,
-        rankShares: [share(1), share(2), share(3)],
+        rankShares: methods.map((_, i) => share(i + 1)),
         playedShare: rows.length ? rows.filter((r) => r.plays > 0).length / rows.length : null,
         meanPlays: mean(rows.map((r) => r.plays)),
         meanListened: mean(rows.map((r) => r.listened)),
@@ -201,7 +231,7 @@
       };
     }).sort((a, b) => a.title.localeCompare(b.title));
 
-    const positions = [0, 1, 2].map((position) => {
+    const positions = methods.map((_, position) => {
       const rows = judgments.filter((j) => j.position === position);
       return { position, n: rows.length, meanRank: mean(rows.map((r) => r.rank)), methodCounts: methods.map((m) => rows.filter((r) => r.method === m).length) };
     });
@@ -250,7 +280,7 @@
     };
   }
 
-  const api = { computeStats, signTestP, holm, friedman, averageRanks, meanCI, median };
+  const api = { computeStats, signTestP, holm, friedman, chiSquareSurvival, averageRanks, meanCI, median };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.StudyStats = api;
 })(this);

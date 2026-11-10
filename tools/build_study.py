@@ -14,6 +14,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 GITHUB_FILE_LIMIT = 100 * 1024 * 1024
+VIDEOS_PER_SCENE = 4
 
 
 def fail(message):
@@ -54,8 +55,8 @@ def check_scene(scene):
     for field in ("key", "title", "summary", "requested", "videos"):
         if not scene.get(field):
             fail(f"scene {key}: missing {field}")
-    if len(scene["videos"]) != 3:
-        fail(f"scene {key}: needs exactly 3 videos, found {len(scene['videos'])}")
+    if len(scene["videos"]) != VIDEOS_PER_SCENE:
+        fail(f"scene {key}: needs exactly {VIDEOS_PER_SCENE} videos, found {len(scene['videos'])}")
     for path in scene["videos"].values():
         if not Path(path).is_file():
             fail(f"scene {key}: video not found: {path}")

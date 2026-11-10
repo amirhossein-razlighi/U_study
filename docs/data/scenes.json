@@ -1,9 +1,9 @@
 {
- "version": "v1",
- "question": "Rank the three videos overall, from best (1) to worst (3).",
+ "version": "v2",
+ "question": "Rank the four videos overall, from best (1) to worst (4).",
  "scenes": [
   {
-   "id": "s_a3b2bc775b56fc30",
+   "id": "s_5049cc3cfee83641",
    "title": "Podcast desk",
    "summary": "Across a close podcast desk, a woman asks where her co-host grew up and he answers.",
    "duration": 10.125,
@@ -31,21 +31,25 @@
    ],
    "outputs": [
     {
-     "id": "o_00d39d5d4c90ee58",
-     "src": "media/o_00d39d5d4c90ee58.mp4"
+     "id": "o_40678944ea5b2cbc",
+     "src": "media/o_40678944ea5b2cbc.mp4"
     },
     {
-     "id": "o_b19268006da7ae47",
-     "src": "media/o_b19268006da7ae47.mp4"
+     "id": "o_5f17bee65091ee1e",
+     "src": "media/o_5f17bee65091ee1e.mp4"
     },
     {
-     "id": "o_bb2dbfa13febb3ce",
-     "src": "media/o_bb2dbfa13febb3ce.mp4"
+     "id": "o_6289eacefc279ebe",
+     "src": "media/o_6289eacefc279ebe.mp4"
+    },
+    {
+     "id": "o_9dbc5b51a811568a",
+     "src": "media/o_9dbc5b51a811568a.mp4"
     }
    ]
   },
   {
-   "id": "s_df8a6ff5e97006e1",
+   "id": "s_47c693148fcea351",
    "title": "Cafe performance",
    "summary": "At a small cafe table, a woman comments on the performer while the man beside her plays acoustic guitar.",
    "duration": 10.125,
@@ -73,21 +77,25 @@
    ],
    "outputs": [
     {
-     "id": "o_2db120c8f052f155",
-     "src": "media/o_2db120c8f052f155.mp4"
+     "id": "o_060db89c033bcc5c",
+     "src": "media/o_060db89c033bcc5c.mp4"
     },
     {
-     "id": "o_b666c706b88d0865",
-     "src": "media/o_b666c706b88d0865.mp4"
+     "id": "o_376876ff877dba62",
+     "src": "media/o_376876ff877dba62.mp4"
     },
     {
-     "id": "o_d83f82bdeb1f0c9e",
-     "src": "media/o_d83f82bdeb1f0c9e.mp4"
+     "id": "o_ea90d11a03c55a93",
+     "src": "media/o_ea90d11a03c55a93.mp4"
+    },
+    {
+     "id": "o_efb5d902c376471b",
+     "src": "media/o_efb5d902c376471b.mp4"
     }
    ]
   },
   {
-   "id": "s_f12d96bbe5fc0adb",
+   "id": "s_d3b80492b4c70db3",
    "title": "Virtual kitchen",
    "summary": "In a sunlit animated kitchen, a cook announces breakfast and an older guest offers to set the table.",
    "duration": 10.125,
@@ -115,21 +123,25 @@
    ],
    "outputs": [
     {
-     "id": "o_2362b0cd191fcc9f",
-     "src": "media/o_2362b0cd191fcc9f.mp4"
+     "id": "o_0a01176892c86802",
+     "src": "media/o_0a01176892c86802.mp4"
     },
     {
-     "id": "o_a5f42d31af73f9c2",
-     "src": "media/o_a5f42d31af73f9c2.mp4"
+     "id": "o_1d19434e845fb089",
+     "src": "media/o_1d19434e845fb089.mp4"
     },
     {
-     "id": "o_ac543ede4764da12",
-     "src": "media/o_ac543ede4764da12.mp4"
+     "id": "o_c02f568a17e62888",
+     "src": "media/o_c02f568a17e62888.mp4"
+    },
+    {
+     "id": "o_f66a95118a0e4299",
+     "src": "media/o_f66a95118a0e4299.mp4"
     }
    ]
   },
   {
-   "id": "s_8aa80a751d1cf6df",
+   "id": "s_f5020900bed3443a",
    "title": "Studio introduction",
    "summary": "In a bright studio, two presenters tell the viewer that the video and its separate voice tracks were generated together.",
    "duration": 10.125,
@@ -157,21 +169,25 @@
    ],
    "outputs": [
     {
-     "id": "o_85c7e3ba366e88b4",
-     "src": "media/o_85c7e3ba366e88b4.mp4"
+     "id": "o_00f731412f1ae15d",
+     "src": "media/o_00f731412f1ae15d.mp4"
     },
     {
-     "id": "o_9f5a5fb08d4ade26",
-     "src": "media/o_9f5a5fb08d4ade26.mp4"
+     "id": "o_03d903b320e3d515",
+     "src": "media/o_03d903b320e3d515.mp4"
     },
     {
-     "id": "o_fc783211022dbd6a",
-     "src": "media/o_fc783211022dbd6a.mp4"
+     "id": "o_523a2fa22feaa713",
+     "src": "media/o_523a2fa22feaa713.mp4"
+    },
+    {
+     "id": "o_699d1a4dbfeecec6",
+     "src": "media/o_699d1a4dbfeecec6.mp4"
     }
    ]
   },
   {
-   "id": "s_c13fd864e38ce048",
+   "id": "s_061b8137370d224f",
    "title": "Virtual production pitch",
    "summary": "On a colorful animated set, two presenters explain precise sound timing directly to the viewer.",
    "duration": 10.125,
@@ -199,21 +215,25 @@
    ],
    "outputs": [
     {
-     "id": "o_206d25b69207ff13",
-     "src": "media/o_206d25b69207ff13.mp4"
+     "id": "o_041e2258de3c23f9",
+     "src": "media/o_041e2258de3c23f9.mp4"
     },
     {
-     "id": "o_84e2ddd0753e2447",
-     "src": "media/o_84e2ddd0753e2447.mp4"
+     "id": "o_101dad012bd9619e",
+     "src": "media/o_101dad012bd9619e.mp4"
     },
     {
-     "id": "o_f1a95f1fe20aadf1",
-     "src": "media/o_f1a95f1fe20aadf1.mp4"
+     "id": "o_72829e70d78ae47e",
+     "src": "media/o_72829e70d78ae47e.mp4"
+    },
+    {
+     "id": "o_72e03a154af3e993",
+     "src": "media/o_72e03a154af3e993.mp4"
     }
    ]
   },
   {
-   "id": "s_6032782f1668b40e",
+   "id": "s_859aa89607bb53f2",
    "title": "The warm key",
    "summary": "In a candlelit 1940s office, a woman examines a warm brass key and a detective answers from across the table.",
    "duration": 10.125,
@@ -241,21 +261,25 @@
    ],
    "outputs": [
     {
-     "id": "o_4bcdf05e744d9fc1",
-     "src": "media/o_4bcdf05e744d9fc1.mp4"
+     "id": "o_6a9ffb086cb88c35",
+     "src": "media/o_6a9ffb086cb88c35.mp4"
     },
     {
-     "id": "o_9a08b7255741c182",
-     "src": "media/o_9a08b7255741c182.mp4"
+     "id": "o_c582ddfc16d3e768",
+     "src": "media/o_c582ddfc16d3e768.mp4"
     },
     {
-     "id": "o_fcc0a73264b4ea5a",
-     "src": "media/o_fcc0a73264b4ea5a.mp4"
+     "id": "o_e14fc24f1dc66368",
+     "src": "media/o_e14fc24f1dc66368.mp4"
+    },
+    {
+     "id": "o_eee67b02c2da863a",
+     "src": "media/o_eee67b02c2da863a.mp4"
     }
    ]
   },
   {
-   "id": "s_3482aa8593e5422b",
+   "id": "s_d2884c30cb819880",
    "title": "Enchanted archive",
    "summary": "In a lantern-lit magical archive, a cat meows before an archivist and traveler discuss the hidden door it found.",
    "duration": 10.125,
@@ -292,21 +316,25 @@
    ],
    "outputs": [
     {
-     "id": "o_24eea6be04cef802",
-     "src": "media/o_24eea6be04cef802.mp4"
+     "id": "o_40e861f3c4265f83",
+     "src": "media/o_40e861f3c4265f83.mp4"
     },
     {
-     "id": "o_59d29fa85c552a0d",
-     "src": "media/o_59d29fa85c552a0d.mp4"
+     "id": "o_8f737589ff919266",
+     "src": "media/o_8f737589ff919266.mp4"
     },
     {
-     "id": "o_a4e296c7773aa0fe",
-     "src": "media/o_a4e296c7773aa0fe.mp4"
+     "id": "o_9c8210dda5311f3b",
+     "src": "media/o_9c8210dda5311f3b.mp4"
+    },
+    {
+     "id": "o_cc8ef8623830ad39",
+     "src": "media/o_cc8ef8623830ad39.mp4"
     }
    ]
   },
   {
-   "id": "s_c83dd42c020d904a",
+   "id": "s_bc198bd30e7af76a",
    "title": "Crystal court",
    "summary": "In a blue crystal court, a ruler gives an order and a guard responds while a violinist continues playing.",
    "duration": 10.125,
@@ -344,21 +372,25 @@
    ],
    "outputs": [
     {
-     "id": "o_ce1a3b8ba26a0ce0",
-     "src": "media/o_ce1a3b8ba26a0ce0.mp4"
+     "id": "o_1f98dfd92bc42b0e",
+     "src": "media/o_1f98dfd92bc42b0e.mp4"
     },
     {
-     "id": "o_d44060e7c25e3083",
-     "src": "media/o_d44060e7c25e3083.mp4"
+     "id": "o_478093fada397537",
+     "src": "media/o_478093fada397537.mp4"
     },
     {
-     "id": "o_f4f0c108138fdf4e",
-     "src": "media/o_f4f0c108138fdf4e.mp4"
+     "id": "o_7b35d6f7965475aa",
+     "src": "media/o_7b35d6f7965475aa.mp4"
+    },
+    {
+     "id": "o_abbfbe5c967e7fe7",
+     "src": "media/o_abbfbe5c967e7fe7.mp4"
     }
    ]
   },
   {
-   "id": "s_ffb22d51cd53926a",
+   "id": "s_ff6821d3e9fc6bec",
    "title": "Android memory lab",
    "summary": "In a practical-effects robotics lab, a technician confirms a repair and the seated android answers.",
    "duration": 10.125,
@@ -386,21 +418,25 @@
    ],
    "outputs": [
     {
-     "id": "o_82bef8907297cc27",
-     "src": "media/o_82bef8907297cc27.mp4"
+     "id": "o_0923b1c03d37caef",
+     "src": "media/o_0923b1c03d37caef.mp4"
     },
     {
-     "id": "o_b917fe076f8e6db0",
-     "src": "media/o_b917fe076f8e6db0.mp4"
+     "id": "o_a4a1c824720dffa2",
+     "src": "media/o_a4a1c824720dffa2.mp4"
     },
     {
-     "id": "o_e8351fe2a3913bcb",
-     "src": "media/o_e8351fe2a3913bcb.mp4"
+     "id": "o_c5e9ea9457f39d70",
+     "src": "media/o_c5e9ea9457f39d70.mp4"
+    },
+    {
+     "id": "o_e3609bfafce63b2b",
+     "src": "media/o_e3609bfafce63b2b.mp4"
     }
    ]
   },
   {
-   "id": "s_4f0048e7ed296824",
+   "id": "s_e3d94fc5674a1714",
    "title": "Neon biology lab",
    "summary": "In a neon biology lab, a dog and cat call out before a scientist and android discuss their readings.",
    "duration": 10.125,
@@ -446,21 +482,25 @@
    ],
    "outputs": [
     {
-     "id": "o_8be0eafdba75d676",
-     "src": "media/o_8be0eafdba75d676.mp4"
+     "id": "o_10b24510db754376",
+     "src": "media/o_10b24510db754376.mp4"
     },
     {
-     "id": "o_a044253c8573d2a1",
-     "src": "media/o_a044253c8573d2a1.mp4"
+     "id": "o_2853ad569d3df184",
+     "src": "media/o_2853ad569d3df184.mp4"
     },
     {
-     "id": "o_de4ada7132be246d",
-     "src": "media/o_de4ada7132be246d.mp4"
+     "id": "o_3ec1abce28993684",
+     "src": "media/o_3ec1abce28993684.mp4"
+    },
+    {
+     "id": "o_4df9afa7a7d5b9b8",
+     "src": "media/o_4df9afa7a7d5b9b8.mp4"
     }
    ]
   },
   {
-   "id": "s_a70faef3f11a30b6",
+   "id": "s_16678de1d41c24fe",
    "title": "Orbital award stage",
    "summary": "On an orbital award stage, piano and applause accompany a presenter and astronaut exchanging hopeful remarks.",
    "duration": 10.125,
@@ -507,21 +547,25 @@
    ],
    "outputs": [
     {
-     "id": "o_139fad3e8b738989",
-     "src": "media/o_139fad3e8b738989.mp4"
+     "id": "o_236f430f912cc767",
+     "src": "media/o_236f430f912cc767.mp4"
     },
     {
-     "id": "o_189dd622ddfdee5e",
-     "src": "media/o_189dd622ddfdee5e.mp4"
+     "id": "o_728f2dfae713903a",
+     "src": "media/o_728f2dfae713903a.mp4"
     },
     {
-     "id": "o_273fae0a7084f2c7",
-     "src": "media/o_273fae0a7084f2c7.mp4"
+     "id": "o_bddb784c842a56d3",
+     "src": "media/o_bddb784c842a56d3.mp4"
+    },
+    {
+     "id": "o_fc0b93b8448210d8",
+     "src": "media/o_fc0b93b8448210d8.mp4"
     }
    ]
   },
   {
-   "id": "s_bca2dac992c7806b",
+   "id": "s_f2a9ecf365db5830",
    "title": "Clockwork airship",
    "summary": "Inside a brass airship cabin, a door sound is followed by the captain's footsteps and order while a guitarist keeps playing.",
    "duration": 10.125,
@@ -567,16 +611,20 @@
    ],
    "outputs": [
     {
-     "id": "o_a9d20e0b25e5bbad",
-     "src": "media/o_a9d20e0b25e5bbad.mp4"
+     "id": "o_02a650e97690afb8",
+     "src": "media/o_02a650e97690afb8.mp4"
     },
     {
-     "id": "o_c41d5c674e53660a",
-     "src": "media/o_c41d5c674e53660a.mp4"
+     "id": "o_402864faf163de70",
+     "src": "media/o_402864faf163de70.mp4"
     },
     {
-     "id": "o_c861c085a1e24b95",
-     "src": "media/o_c861c085a1e24b95.mp4"
+     "id": "o_6b376859b23e86a7",
+     "src": "media/o_6b376859b23e86a7.mp4"
+    },
+    {
+     "id": "o_fffbb3d2eb51575d",
+     "src": "media/o_fffbb3d2eb51575d.mp4"
     }
    ]
   }

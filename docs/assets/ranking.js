@@ -1,37 +1,37 @@
-// Ranking rules for one scene with three outputs.
+// Ranking rules for one scene.
 //
-// `picks` is the list of manual taps, oldest first: [{ id, rank }]. There are at most two,
-// because the remaining output is always implied as rank 3.
+// `picks` is the list of manual taps, oldest first: [{ id, rank }]. There is always one fewer
+// pick than there are outputs, because the remaining output is implied as the last rank.
 (function (root) {
   'use strict';
 
-  const MANUAL_SLOTS = 2;
-
   function nextRank(picks) {
-    return picks.some((p) => p.rank === 1) ? 2 : 1;
+    let rank = 1;
+    while (picks.some((p) => p.rank === rank)) rank += 1;
+    return rank;
+  }
+
+  function isComplete(picks, outputCount) {
+    return picks.length >= outputCount - 1;
   }
 
   // A tap on a manually ranked output clears only that output, so other ranks never shift.
-  // A tap on the auto-filled third output undoes the tap that caused the auto-fill; clearing
-  // just the third would immediately fill it again.
-  function tap(picks, id) {
+  // A tap on the auto-filled last output undoes the tap that caused the auto-fill; clearing
+  // just the last output would immediately fill it again.
+  function tap(picks, id, outputCount) {
     if (picks.some((p) => p.id === id)) return picks.filter((p) => p.id !== id);
-    if (picks.length >= MANUAL_SLOTS) return picks.slice(0, -1);
+    if (isComplete(picks, outputCount)) return picks.slice(0, -1);
     return [...picks, { id, rank: nextRank(picks) }];
   }
 
   function ranks(picks, ids) {
     const result = {};
     for (const p of picks) result[p.id] = { rank: p.rank, auto: false };
-    if (picks.length >= MANUAL_SLOTS) {
+    if (isComplete(picks, ids.length)) {
       const remaining = ids.find((id) => !result[id]);
-      if (remaining !== undefined) result[remaining] = { rank: 3, auto: true };
+      if (remaining !== undefined) result[remaining] = { rank: ids.length, auto: true };
     }
     return result;
-  }
-
-  function isComplete(picks) {
-    return picks.length >= MANUAL_SLOTS;
   }
 
   const api = { tap, ranks, nextRank, isComplete };

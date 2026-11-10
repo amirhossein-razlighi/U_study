@@ -4,10 +4,10 @@
   const { tap, ranks, nextRank, isComplete } = window.Ranking;
   const cfg = window.STUDY_CONFIG;
 
-  const LETTERS = ['A', 'B', 'C'];
-  const OUTPUT_COLORS = ['#2563eb', '#c026d3', '#d97706'];
+  const LETTERS = ['A', 'B', 'C', 'D'];
+  const OUTPUT_COLORS = ['#2563eb', '#c026d3', '#d97706', '#16a34a'];
   const SOURCE_COLORS = ['#176875', '#974213', '#4d6926', '#754283'];
-  const ORDINALS = { 1: '1st', 2: '2nd', 3: '3rd' };
+  const ORDINALS = { 1: '1st', 2: '2nd', 3: '3rd', 4: '4th' };
   const REQUEST_TIMEOUT_MS = 30000;
   const WHAT_TO_JUDGE = [
     ['Sounds', 'Can you hear every requested sound, and does each one sound natural?'],
@@ -126,7 +126,7 @@
     return draft.answers[sceneId];
   }
 
-  const sceneDone = (id) => isComplete(answerFor(id).picks);
+  const sceneDone = (id) => isComplete(answerFor(id).picks, draft.outputOrder[id].length);
 
   /* Requested timeline. One colored playhead per output. */
 
@@ -240,13 +240,13 @@
           delete button.dataset.rank;
           delete button.dataset.auto;
           button.querySelector('.main').textContent = `Tap for ${ORDINALS[upcoming]}`;
-          button.querySelector('.sub').textContent = upcoming === 1 ? 'Best of the three' : 'Next best';
+          button.querySelector('.sub').textContent = upcoming === 1 ? 'Best of all' : 'Next best';
           button.setAttribute('aria-label', `Rank Output ${letter} ${ORDINALS[upcoming]}`);
         }
       });
-      const done = isComplete(answer.picks);
+      const done = isComplete(answer.picks, ids.length);
       if (done) {
-        const order = [1, 2, 3].map((r) => `${ORDINALS[r]}: Output ${LETTERS[ids.findIndex((id) => current[id].rank === r)]}`);
+        const order = ids.map((_, i) => i + 1).map((r) => `${ORDINALS[r]}: Output ${LETTERS[ids.findIndex((id) => current[id].rank === r)]}`);
         status.textContent = `Your ranking. ${order.join(' · ')}`;
       } else {
         status.textContent = `Next, tap the output you rank ${ORDINALS[upcoming]}.`;
@@ -296,7 +296,7 @@
         type: 'button',
         on: {
           click: () => {
-            answer.picks = tap(answer.picks, output.id);
+            answer.picks = tap(answer.picks, output.id, ids.length);
             saveDraft();
             refreshRanks();
           },
@@ -349,7 +349,7 @@
         el('strong', {}, 'What to pay attention to'),
         ...WHAT_TO_JUDGE.map(([name, text]) => el('p', {}, el('b', {}, `${name}. `), text)),
         el('strong', { class: 'task-next' }, 'How to rank'),
-        el('p', {}, 'Tap the best video first, then the second best. The last one fills in by itself. Tap a ranked video again to undo.')));
+        el('p', {}, 'Tap the videos in order, best first. The last one fills in by itself. Tap a ranked video again to undo.')));
 
     const workspace = el('main', { class: 'workspace' },
       rail,
@@ -378,8 +378,8 @@
     const answers = [];
     for (const sceneId of draft.sceneOrder) {
       const answer = answerFor(sceneId);
-      if (!isComplete(answer.picks)) continue;
       const ids = draft.outputOrder[sceneId];
+      if (!isComplete(answer.picks, ids.length)) continue;
       const placed = ranks(answer.picks, ids);
       answers.push({
         scene_id: sceneId,
@@ -491,7 +491,7 @@
 
   function renderConsent() {
     notice('Media evaluation', 'Before you begin',
-      body(`You will compare short AI-generated videos across ${study.scenes.length} scenes and rank the three videos in each one. Each scene takes a minute or two.`),
+      body(`You will compare short AI-generated videos across ${study.scenes.length} scenes and rank the ${study.scenes[0].outputs.length} videos in each one. Each scene takes a minute or two.`),
       body('For each scene, please pay attention to:'),
       el('ul', {}, ...WHAT_TO_JUDGE.map(([name, text]) => el('li', {}, el('b', {}, `${name}. `), text))),
       body('Before you start:'),
@@ -506,7 +506,7 @@
   }
 
   function renderResume(saved) {
-    const answered = saved.sceneOrder.filter((id) => saved.answers[id] && isComplete(saved.answers[id].picks)).length;
+    const answered = saved.sceneOrder.filter((id) => saved.answers[id] && isComplete(saved.answers[id].picks, saved.outputOrder[id].length)).length;
     notice('Welcome back.', 'Unfinished response',
       body(`You have ranked ${answered} of ${saved.sceneOrder.length} scenes in this browser.`),
       el('div', { class: 'actions' },

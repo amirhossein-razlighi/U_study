@@ -208,7 +208,7 @@ button { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 
 /* Output cards and rank controls. */
 .question { margin: 0 0 12px; font-size: 20px; letter-spacing: -.01em; }
-.outputs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.outputs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
 .output-card { min-width: 0; padding-top: 10px; border-top: 4px solid var(--out); }
 .output-name { margin: 0 0 8px; font-size: 15px; font-weight: 750; }
 .video-frame { position: relative; overflow: hidden; border-radius: 5px; background: #09110d; }
@@ -239,12 +239,17 @@ button { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 .rank-btn[data-rank="1"] { background: var(--gold); border-color: var(--gold); }
 .rank-btn[data-rank="2"] { background: var(--silver); border-color: var(--silver); }
 .rank-btn[data-rank="3"] { background: var(--bronze); border-color: var(--bronze); }
+.rank-btn[data-rank="4"] { background: #d8d4c7; border-color: #d8d4c7; }
 .rank-btn[data-auto="true"] { border-style: dashed; border-color: var(--ink); }
 .rank-btn[data-rank] .sub { color: var(--ink); }
 
 .rank-status { min-height: 24px; margin: 14px 0 0; color: var(--muted); font-size: 15px; }
 .scene-nav { display: flex; align-items: center; gap: 12px; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
 .scene-nav .count { margin-right: auto; color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 1320px) {
+  .outputs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 
 @media (max-width: 1100px) {
   .workspace { grid-template-columns: minmax(0, 1fr); gap: 20px; padding: 20px 16px 32px; }
