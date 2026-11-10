@@ -49,16 +49,19 @@
 
   /* Sign-in. */
 
-  async function requestData(candidate) {
+  async function adminRequest(body) {
     const res = await fetch(cfg.apiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'admin', password: candidate }),
+      body: JSON.stringify(body),
     });
     const data = await res.json();
     if (data.status === 'ok') return data;
     throw new Error(data.status || 'error');
   }
+
+  const requestData = (candidate) => adminRequest({ action: 'admin', password: candidate });
+  const requestDelete = (submissionId) => adminRequest({ action: 'admin_delete', password, submission_id: submissionId });
 
   const SIGN_IN_ERRORS = {
     denied: 'Incorrect password.',
@@ -198,6 +201,61 @@
         el('span', { class: 'day-label' }, d.day.slice(5)))));
   }
 
+  /* Deleting a response. The server only flags it, so the row stays in the database. */
+
+  function confirmDelete(response) {
+    const shortId = response.id.slice(0, 8);
+    const error = el('p', { class: 'error-text', role: 'alert', hidden: 'hidden' });
+    const closeDialog = () => { dialog.close(); dialog.remove(); };
+    const cancel = el('button', { class: 'btn', type: 'button', on: { click: closeDialog } }, 'Cancel');
+    const confirm = el('button', {
+      class: 'btn danger',
+      type: 'button',
+      on: {
+        click: async () => {
+          confirm.disabled = true;
+          cancel.disabled = true;
+          error.hidden = true;
+          try {
+            await requestDelete(response.id);
+            const data = await requestData(password);
+            closeDialog();
+            renderPanel(data);
+          } catch (e) {
+            if (SIGN_IN_ERRORS[e.message]) {
+              closeDialog();
+              renderSignIn(SIGN_IN_ERRORS[e.message]);
+              return;
+            }
+            error.textContent = 'The response could not be deleted. Please try again.';
+            error.hidden = false;
+            confirm.disabled = false;
+            cancel.disabled = false;
+          }
+        },
+      },
+    }, 'Delete');
+    const dialog = el('dialog', { class: 'confirm', 'aria-labelledby': 'confirm-title', on: { close: () => dialog.remove() } },
+      el('h2', { id: 'confirm-title' }, 'Are you sure?'),
+      el('p', { class: 'note' }, `Response ${shortId} will be removed from the results and statistics.`),
+      error,
+      el('div', { class: 'actions' }, cancel, confirm));
+    document.body.append(dialog);
+    dialog.showModal();
+  }
+
+  function deleteButton(response) {
+    const button = el('button', {
+      class: 'delete-btn',
+      type: 'button',
+      title: 'Delete response',
+      'aria-label': `Delete response ${response.id.slice(0, 8)}`,
+      on: { click: () => confirmDelete(response) },
+    });
+    button.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>';
+    return el('td', { class: 'delete-cell' }, button);
+  }
+
   /* Panel. */
 
   function renderPanel(data) {
@@ -292,6 +350,7 @@
       ...r.methodMeans.map((m) => el('td', { class: 'num' }, fixed(m))),
       el('td', { class: 'num' }, pct(r.playedShare)),
       [r.isDebug ? 'Debug' : '', r.lowEngagement ? 'Low engagement' : ''].filter(Boolean).join(', '),
+      deleteButton(r),
     ]);
 
     app.replaceChildren(el('main', { class: 'dashboard' },
@@ -321,7 +380,7 @@
       section('Responses per day', null, perDayChart(stats)),
 
       section('Individual responses', 'Newest first. Method columns show each participant\'s mean rank.',
-        table(['ID', 'Submitted', 'Duration', 'Scenes', ...stats.methods, 'Played', 'Flag'], responseRows))));
+        table(['ID', 'Submitted', 'Duration', 'Scenes', ...stats.methods, 'Played', 'Flag', ''], responseRows))));
   }
 
   /* Tooltip for chart marks. */

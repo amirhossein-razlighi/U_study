@@ -44,6 +44,8 @@ Then run `python3 tools/build_study.py`. Change `version` whenever scenes change
 
 Sign in at `/admin/` for the results panel. The password and the output-to-method map exist only in Supabase (see `supabase/002_admin_access.sql`), so results stay private even though this repo is public.
 
+The bin icon on a response only flags it as deleted. To restore one, see `supabase/003_soft_delete_responses.sql`.
+
 If a participant's submission fails, the study shows them their response as JSON to send you. Add it in the Supabase SQL editor with `select public.submit_study_response('<access value>', '<their JSON>'::jsonb);`.
 
 For custom queries, use the `study_rankings` view in the Supabase SQL editor, and join `output_id` to `study_codebook` for method names.
